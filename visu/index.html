@@ -14,7 +14,11 @@ path {
 <body>
 <script src="d3.v3.min.js"></script>
 <script src="topojson.v1.min.js"></script>
+<script src="colorbrewer.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
 <script>
+indexById = d3.map();
+
 var width = 1000,
     height = 800;
 
@@ -29,15 +33,33 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("worldmap.json", function(error, worldmap) {
+// d3.json("worldmap.json", function(error, worldmap) {
+//     svg.append("path")
+//        .datum(topojson.feature(worldmap, worldmap.objects.subunits))
+//        .attr("d", path);
+//     svg.selectAll(".subunit")
+//         .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
+//       .enter().append("path")
+//         .attr("class", function(d) { return "subunit " + d.id; })
+//         .attr("d", path);
+// });
+
+queue()
+    .defer(d3.json, "worldmap.json")
+    .defer(d3.json, "iso_index.json")
+    .await(drawMap);
+
+function drawMap(error, worldmap, iso_index) {
     svg.append("path")
        .datum(topojson.feature(worldmap, worldmap.objects.subunits))
-       .attr("d", path);
+       .attr("d", path)
+       .attr("class", "world")
     svg.selectAll(".subunit")
-        .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
-      .enter().append("path")
-        .attr("class", function(d) { return "subunit " + d.id; })
-        .attr("d", path);
-});
-
+       .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
+       .enter().append("path")
+       .style("fill", function(d) {
+            return colorbrewer.YlGn[9][ Math.floor(9 - (iso_index[d.id] | 0)/81*9)]; })
+       .attr("class", function(d) { return iso_index[d.id] | 0; })
+       .attr("d", path);
+};
 </script>
