@@ -2,7 +2,13 @@
 <meta charset="utf-8">
 <style>
 
-/* CSS goes here. */
+path {
+    fill: #eee;
+    stroke: black;
+    stroke-width: 0.5;
+}
+
+.subunit.ZAF { fill: red; }
 
 </style>
 <body>
@@ -13,7 +19,7 @@ var width = 1000,
     height = 800;
 
 var projection = d3.geo.mercator()
-    .scale(500)
+    .scale(100)
     .translate([width / 2, height / 2]);
 
 var path = d3.geo.path()
@@ -24,10 +30,14 @@ var svg = d3.select("body").append("svg")
     .attr("height", height);
 
 d3.json("worldmap.json", function(error, worldmap) {
-    console.log(worldmap);
     svg.append("path")
        .datum(topojson.feature(worldmap, worldmap.objects.subunits))
        .attr("d", path);
+    svg.selectAll(".subunit")
+        .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
+      .enter().append("path")
+        .attr("class", function(d) { return "subunit " + d.id; })
+        .attr("d", path);
 });
 
 </script>
