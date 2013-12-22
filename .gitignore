@@ -2,3 +2,6 @@
 *.xls
 *.xlsx
 *.zip
+
+# Ignore some Python
+*/.ipynb_checkpoints
