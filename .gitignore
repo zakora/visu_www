@@ -1,0 +1,4 @@
+# Ignore some data files
+*.xls
+*.xlsx
+*.zip
