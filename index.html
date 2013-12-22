@@ -45,8 +45,8 @@ var svg = d3.select("body").append("svg")
 // });
 
 queue()
-    .defer(d3.json, "worldmap.json")
-    .defer(d3.json, "iso_index.json")
+    .defer(d3.json, "data/worldmap.json")
+    .defer(d3.json, "data/iso_index.json")
     .await(drawMap);
 
 function drawMap(error, worldmap, iso_index) {
