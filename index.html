@@ -5,10 +5,8 @@
 path {
     fill: #eee;
     stroke: black;
-    stroke-width: 0.5;
+    stroke-width: 0.2;
 }
-
-.subunit.ZAF { fill: red; }
 
 </style>
 <body>
@@ -17,8 +15,6 @@ path {
 <script src="lib/colorbrewer.js"></script>
 <script src="lib/queue.min.js"></script>
 <script>
-indexById = d3.map();
-
 var width = 1000,
     height = 800;
 
@@ -32,17 +28,6 @@ var path = d3.geo.path()
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
-
-// d3.json("worldmap.json", function(error, worldmap) {
-//     svg.append("path")
-//        .datum(topojson.feature(worldmap, worldmap.objects.subunits))
-//        .attr("d", path);
-//     svg.selectAll(".subunit")
-//         .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
-//       .enter().append("path")
-//         .attr("class", function(d) { return "subunit " + d.id; })
-//         .attr("d", path);
-// });
 
 queue()
     .defer(d3.json, "data/worldmap.json")
@@ -63,3 +48,5 @@ function drawMap(error, worldmap, iso_index) {
        .attr("d", path);
 };
 </script>
+</body>
+</html>
