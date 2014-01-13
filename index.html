@@ -39,10 +39,6 @@ queue()
 
 // Main draw function: worldmap
 function drawMap(error, worldmap, iso_index) {
-    svg.append("path")
-       .datum(topojson.feature(worldmap, worldmap.objects.subunits))
-       .attr("d", path)
-       .attr("class", "world")
     svg.selectAll(".subunit")
        .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
        .enter().append("path")
