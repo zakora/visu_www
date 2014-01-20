@@ -35,18 +35,48 @@ var svg = d3.select("body").append("svg")
 queue()
     .defer(d3.json, "data/worldmap.json")
     .defer(d3.json, "data/iso_index.json")
-    .await(drawMap);
+    .await(draw_all);
+
+var fill_country = function(d, iso_index) {
+    return colorbrewer.YlGn[9][Math.floor(9 - (iso_index[d.id] | 0)/81*9)]; }
+
+function draw_all(error, worldmap, iso_index) {
+    drawMap(error, worldmap, iso_index)
+    draw_hist(error, iso_index)
+    }
 
 // Main draw function: worldmap
 function drawMap(error, worldmap, iso_index) {
     svg.selectAll(".subunit")
        .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
        .enter().append("path")
-       .style("fill", function(d) {
-            return colorbrewer.YlGn[9][ Math.floor(9 - (iso_index[d.id] | 0)/81*9)]; })
+       .style("fill", function(d) {return fill_country(d, iso_index)})
+       .on("mouseover", function(d) {d3.select(this).style("opacity", 0.8)})
+       .on("mouseout", function(d) {d3.select(this).style("opacity", 1)})
        .attr("class", function(d) { return iso_index[d.id] | 0; })
+       .attr("id", function(d) {return d.id})
        .attr("d", path);
 };
+
+var width = 500
+var height = 200
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1)
+
+var y = d3.scale.linear()
+    .range([height, 0])
+
+function draw_hist(error, iso_index) {
+    var values = Object.keys(iso_index).map(function(key){ return iso_index[key];}
+    console.log("woh")
+    svg.selectAll(".bar")
+            .data(values)
+        .enter().append("rect")
+            .attr("width", 20)
+            .
+}
+
 </script>
 </body>
 </html>
