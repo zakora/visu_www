@@ -8,12 +8,24 @@ path {
     stroke-width: 0.2;
 }
 
+#infocountry p {
+    margin: 0;
+    padding: 0;
+}
+
+#infocountry {
+    width: 200px;
+    height: 200px;
+}
+
 </style>
 <body>
 <script src="lib/d3.v3.min.js"></script>
 <script src="lib/topojson.v1.min.js"></script>
 <script src="lib/colorbrewer.js"></script>
 <script src="lib/queue.min.js"></script>
+<div id="infocountry">
+</div>
 <script>
 // Settings
 var width = 1000,
@@ -37,16 +49,41 @@ queue()
     .defer(d3.json, "data/iso_index.json")
     .await(drawMap);
 
+var displayCountryName = function(cname, index) {
+
+    d3.select("#infocountry")
+        .selectAll("p")
+        .remove();
+
+    d3.select("#infocountry")
+        .selectAll("p")
+        .data([cname])
+        .enter().append("p")
+        .text(function (d) { return d+", index:"+index;});
+};
+
+
+var colorCountry = function(iso_index, id) {
+    return colorbrewer.YlGn[9][ Math.floor(9 - (iso_index[id] | 0)/81*9)];
+}
+
 // Main draw function: worldmap
 function drawMap(error, worldmap, iso_index) {
-    svg.selectAll(".subunit")
+    svg.selectAll()
        .data(topojson.feature(worldmap, worldmap.objects.subunits).features)
        .enter().append("path")
-       .style("fill", function(d) {
-            return colorbrewer.YlGn[9][ Math.floor(9 - (iso_index[d.id] | 0)/81*9)]; })
+       .style("fill", function(d) { return colorCountry(iso_index, d.id) })
        .attr("class", function(d) { return iso_index[d.id] | 0; })
-       .attr("d", path);
+       .attr("id", function(d) { return d.id })
+       .attr("d", path)
+       .on("mouseover", function(d) {
+            displayCountryName(d.id, iso_index[d.id]);
+            d3.select(this).style("opacity", 0.5)})
+       .on("mouseout", function(d) {
+            d3.select(this).style("opacity", 1)
+        });
 };
+
 </script>
 </body>
 </html>
